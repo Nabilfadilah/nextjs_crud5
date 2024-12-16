@@ -31,6 +31,31 @@ const TableData = () => {
     fetchData();
   });
 
+  // handle delete user
+  const handleDelete = async (id: string) => {
+    // Konfirmasi sebelum menghapus
+    const confirmDelete = window.confirm(
+      "Apakah Anda yakin ingin menghapus user ini?"
+    );
+    if (!confirmDelete) return; // Jika user membatalkan, keluar dari fungsi
+
+    try {
+      // Hapus user dari server
+      await axios.delete(`http://localhost:3001/deleteuser/${id}`);
+
+      // Update state dengan data yang tersisa
+      const newUserData = userData.filter((item) => item._id !== id);
+      setUserData(newUserData);
+
+      // Tampilkan alert sukses
+      alert("User Sukses diHapus!");
+    } catch (error) {
+      // Tampilkan alert jika terjadi error
+      alert("Failed to delete user. Please try again.");
+      console.error("Error deleting user:", error);
+    }
+  };
+
   return (
     <table className="table-fixed">
       <thead className="text-sm text-gray-700 uppercase bg-gray-50">
@@ -56,7 +81,12 @@ const TableData = () => {
               <Link href={`/user/edit/${rs._id}`} className="btn btn-primary">
                 Edit
               </Link>
-              <button className="btn btn-secondary">Delete</button>
+              <button
+                onClick={() => handleDelete(rs._id)}
+                className="btn btn-secondary"
+              >
+                Delete
+              </button>
             </td>
           </tr>
         ))}
